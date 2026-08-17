@@ -12,37 +12,46 @@ const { SSI_BASE_URL, KYC_BASE_URL, X_ISSUER_VERMETHOD_ID, X_ISSUER_DID } = requ
  * @throws {Error} Throws if DID creation fails or the required verification method is not found.
  */
 async function registerUserDid(ssiAdminToken, namespace = '') {
-    const url = `${SSI_BASE_URL}/api/v1/did/create`;
+    // const url = `${SSI_BASE_URL}/api/v1/did/create`;
+
+    console.log(`[DID Registration]: Initiating DID registration for namespace: '${namespace}'`);
+
 
     try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${ssiAdminToken}`
-            },
-            body: JSON.stringify({ namespace })
-        });
+        // const response = await fetch(url, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'Authorization': `Bearer ${ssiAdminToken}`
+        //     },
+        //     body: JSON.stringify({ namespace })
+        // });
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`SSI DID Creation failed [${response.status}]: ${errorText}`);
-        }
+        // if (!response.ok) {
+        //     const errorText = await response.text();
+        //     throw new Error(`SSI DID Creation failed [${response.status}]: ${errorText}`);
+        // }
 
-        const result = await response.json();
+        // const result = await response.json();
 
-        // Navigate the metadata to find the specific Ed25519 verification method
-        const verificationMethods = result.metaData?.didDocument?.verificationMethod || [];
-        const targetMethod = verificationMethods.find(m => m.type === 'Ed25519VerificationKey2020');
+        // // Navigate the metadata to find the specific Ed25519 verification method
+        // const verificationMethods = result.metaData?.didDocument?.verificationMethod || [];
+        // const targetMethod = verificationMethods.find(m => m.type === 'Ed25519VerificationKey2020');
 
-        if (!targetMethod) {
-            throw new Error("Invalid DID Document: Ed25519VerificationKey2020 method not found.");
-        }
+        // if (!targetMethod) {
+        //     throw new Error("Invalid DID Document: Ed25519VerificationKey2020 method not found.");
+        // }
 
+        // return {
+        //     did: result.did,
+        //     verificationMethodId: targetMethod.id
+        // };
+        console.log(`[DID Registration]: Simulating DID registration for namespace: '${namespace}'`);
+        const randomDid = "did:hid:" + Math.random().toString(36).substring(2, 15);
         return {
-            did: result.did,
-            verificationMethodId: targetMethod.id
-        };
+            did: randomDid,
+            verificationMethodId: randomDid + "#key-1"
+        }
 
     } catch (error) {
         console.error(`[DID Registration Error]: ${error.message}`);
