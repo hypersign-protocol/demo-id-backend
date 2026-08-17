@@ -91,7 +91,10 @@ app.post('/get-required-tokens-and-session-for-a-user', async (req, res) => {
 
 // Explicit route for index.html (optional but clear)
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    // res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.status(200).json({
+        message: "Welcome to ID Demo service! Time is: " + new Date().toISOString()
+    })
 });
 // api to get webhook data
 app.post('/webhook', (req, res) => {
