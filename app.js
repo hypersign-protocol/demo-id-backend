@@ -53,6 +53,7 @@ app.post('/get-required-tokens-and-session-for-a-user', async (req, res) => {
 
         // 4. Register a new User DID
         const userDidMetadata = await registerUserDid(ssiAdminToken);
+        console.log(`[User DID Registration]: Successfully registered DID: ${userDidMetadata.did} with Verification Method ID: ${userDidMetadata.verificationMethodId}`);
 
         // 5. Prepare User Claims using dynamic data from request
         const userData = {
