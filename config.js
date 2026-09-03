@@ -20,6 +20,8 @@ function normalizeWidgetUrl(value) {
 }
 
 const WIDGET_URL = normalizeWidgetUrl(process.env.WIDGET_URL);
+const BEERKART_WIDGET_CONFIG_ID = process.env.BEERKART_WIDGET_CONFIG_ID;
+const BANKIFY_WIDGET_CONFIG_ID = process.env.BANKIFY_WIDGET_CONFIG_ID;
 // 2. Create Issuer Account
 const X_ISSUER_DID = process.env.ISSUER_DID;
 const X_ISSUER_VERMETHOD_ID = process.env.ISSUER_VERMETHOD_ID;
@@ -32,6 +34,8 @@ module.exports = {
     SSI_BASE_URL,
     DEVELOPER_DASHBOARD_SERVICE_BASE_URL,
     WIDGET_URL,
+    BEERKART_WIDGET_CONFIG_ID,
+    BANKIFY_WIDGET_CONFIG_ID,
     X_ISSUER_DID,
     X_ISSUER_VERMETHOD_ID,
 }
