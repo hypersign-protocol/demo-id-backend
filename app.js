@@ -8,7 +8,8 @@ const {
     X_ISSUER_DID,
     WIDGET_URL,
     BEERKART_WIDGET_CONFIG_ID,
-    BANKIFY_WIDGET_CONFIG_ID
+    BANKIFY_WIDGET_CONFIG_ID,
+    NUVEX_WIDGET_CONFIG_ID
 } = require('./config')
 
 const app = express();
@@ -17,8 +18,7 @@ const PORT = 3007;
 const WIDGET_CONFIG_IDS_BY_USE_CASE = {
     beerkart: BEERKART_WIDGET_CONFIG_ID,
     bankify: BANKIFY_WIDGET_CONFIG_ID,
-    // NuVex deliberately uses the default widget configuration.
-    nuvex: undefined
+    nuvex: NUVEX_WIDGET_CONFIG_ID
 };
 
 function getWidgetConfigId(useCase) {
