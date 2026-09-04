@@ -3,10 +3,30 @@ const path = require('path');
 const { getCachedAdminTokens, generateKycUserSessionToken } = require('./tokenService')
 const { initializeVerificationSession } = require('./idService')
 const { registerUserDid } = require('./ssiService')
-const { X_ISSUER_VERMETHOD_ID, X_ISSUER_DID, WIDGET_URL } = require('./config')
+const {
+    X_ISSUER_VERMETHOD_ID,
+    X_ISSUER_DID,
+    WIDGET_URL,
+    BEERKART_WIDGET_CONFIG_ID,
+    BANKIFY_WIDGET_CONFIG_ID,
+    NUVEX_WIDGET_CONFIG_ID
+} = require('./config')
 
 const app = express();
 const PORT = 3007;
+
+const WIDGET_CONFIG_IDS_BY_USE_CASE = {
+    beerkart: BEERKART_WIDGET_CONFIG_ID,
+    bankify: BANKIFY_WIDGET_CONFIG_ID,
+    nuvex: NUVEX_WIDGET_CONFIG_ID
+};
+
+function getWidgetConfigId(useCase) {
+    if (typeof useCase !== 'string') {
+        return undefined;
+    }
+    return WIDGET_CONFIG_IDS_BY_USE_CASE[useCase.trim().toLowerCase()] || undefined;
+}
 
 // Serve static files from public folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -37,7 +57,8 @@ app.use((req, res, next) => {
 app.post('/get-required-tokens-and-session-for-a-user', async (req, res) => {
     try {
         // 1. Extract and Validate input from request body
-        const { name, email } = req.body;
+        const { name, email, useCase, usecase } = req.body;
+        const requestedUseCase = useCase ?? usecase;
 
         if (!name || !email) {
             return res.status(400).json({
@@ -49,7 +70,8 @@ app.post('/get-required-tokens-and-session-for-a-user', async (req, res) => {
         const { kycAdminToken, ssiAdminToken } = await getCachedAdminTokens();
 
         // 3. Initialize the KYC Verification Session
-        const sessionId = await initializeVerificationSession(kycAdminToken);
+        const widgetConfigId = getWidgetConfigId(requestedUseCase);
+        const sessionId = await initializeVerificationSession(kycAdminToken, widgetConfigId);
 
         // 4. Register a new User DID
         const userDidMetadata = await registerUserDid(ssiAdminToken);
@@ -80,6 +102,7 @@ app.post('/get-required-tokens-and-session-for-a-user', async (req, res) => {
             issuerDid: X_ISSUER_DID,
             issuerVerificationMethodId: X_ISSUER_VERMETHOD_ID,
             sessionId,
+            ...(widgetConfigId && { widgetConfigId }),
             userDid: userDidMetadata.did,
             userVerificationMethodId: userDidMetadata.verificationMethodId
         });

@@ -7,18 +7,23 @@ const { KYC_BASE_URL } = require('./config')
  * * @async
  * @function initializeVerificationSession
  * @param {string} kycAdminToken - The administrative access token for the KYC service.
+ * @param {string} [widgetConfigId] - Optional widget configuration ID for the session.
  * @returns {Promise<string>} A promise that resolves to the unique sessionId.
  * @throws {Error} Throws an error if the request fails or the response format is invalid.
  */
-async function initializeVerificationSession(kycAdminToken) {
+async function initializeVerificationSession(kycAdminToken, widgetConfigId) {
     try {
-        const response = await fetch(`${KYC_BASE_URL}/api/v2/session`, {
+        const requestOptions = {
             method: 'POST',
             headers: {
                 'x-kyc-access-token': kycAdminToken,
                 'Content-Type': 'application/json'
             }
-        });
+        };
+        if (widgetConfigId) {
+            requestOptions.body = JSON.stringify({ widgetConfigId });
+        }
+        const response = await fetch(`${KYC_BASE_URL}/api/v2/session`, requestOptions);
 
         if (!response.ok) {
             const errorText = await response.text();
